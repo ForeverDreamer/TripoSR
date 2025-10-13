@@ -2,6 +2,7 @@
 # ║   WSL2 高性能配置 - 针对大模型训练和推理优化                   ║
 # ║   硬件: 64GB RAM, i9-13900KF (24核32线程), RTX 5070 Ti 16GB   ║
 # ║   优化目标: 最大化AI/ML性能，同时保证Windows稳定性             ║
+# ║   网络: Mirror模式 + Blender/Adobe MCP桥接支持                 ║
 # ╚════════════════════════════════════════════════════════════════╝
 
 [wsl2]
@@ -66,13 +67,30 @@ guessVhdSize=true
 nestedVirtualization=true
 
 # ═══════════════════════════════════════════════════════════════
-# 网络优化
+# 网络优化 (Mirror 模式 - Windows 11 22H2+ 支持)
 # ═══════════════════════════════════════════════════════════════
 
 # Localhost转发: 启用
 # 确保WSL2的端口可以从Windows访问
 # 用于TensorBoard、Jupyter等Web服务
 localhostForwarding=true
+
+# 网络模式: Mirror (镜像模式)
+# Windows 11 22H2+ 支持，提供更好的网络性能
+# WSL和Windows共享相同的网络栈，简化端口访问
+networkingMode=mirrored
+
+# DNS隧道: 启用
+# 改善DNS解析性能和兼容性
+dnsTunneling=true
+
+# Hyper-V防火墙: 启用
+# 与Windows防火墙集成，提供更好的安全性
+firewall=true
+
+# 自动代理: 启用
+# 自动继承Windows的代理设置
+autoProxy=true
 
 # ═══════════════════════════════════════════════════════════════
 # Linux内核参数优化
@@ -92,6 +110,26 @@ kernelCommandLine = sysctl.vm.swappiness=10 sysctl.vm.max_map_count=262144 sysct
 
 # 调试控制台: 关闭 (生产环境)
 debugConsole=false
+
+# ═══════════════════════════════════════════════════════════════
+# 实验性功能 (WSL 预览版特性)
+# ═══════════════════════════════════════════════════════════════
+
+[experimental]
+# 注: autoMemoryReclaim 和 sparseVhd 已在 [wsl2] 节中配置
+
+# ═══════════════════════════════════════════════════════════════
+# 防火墙配置 (Blender/Adobe MCP桥接端口白名单)
+# ═══════════════════════════════════════════════════════════════
+
+[firewall]
+# Blender MCP服务端口范围: 19876-19880
+# 19876: Blender Socket桥接服务器
+# 19877: Adobe After Effects CEP插件
+# 19878: Adobe Premiere Pro CEP插件
+# 19879: Adobe Photoshop CEP插件
+# 19880: Adobe Illustrator CEP插件
+ignoredPorts=19876-19880
 
 # ═══════════════════════════════════════════════════════════════
 # 性能调优说明
@@ -123,6 +161,13 @@ debugConsole=false
 #    - 修改后必须执行 "wsl --shutdown" 才能生效
 #    - 首次启动WSL2会预分配部分内存
 #    - 训练时监控Windows可用内存，确保不低于4GB
+#    - Mirror模式需要 Windows 11 22H2 (Build 22621+)
+#    - 如果系统不支持Mirror模式，删除networkingMode相关配置
+#
+# 🔧 故障排除:
+#    - 如果WSL启动失败，可能是不支持某些新特性
+#    - 尝试注释掉 [experimental] 和 [firewall] 节
+#    - 检查WSL版本: wsl --version (需要 2.0.0+)
 #
 # ═══════════════════════════════════════════════════════════════
 

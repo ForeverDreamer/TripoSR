@@ -1,0 +1,11 @@
+
+
+python run.py examples/unicorn.png --output-dir output/
+
+python run.py examples/rocket.png --output-dir /mnt/d/VideoCreation/Tests/rocket/
+
+sudo命令的密码是"5f3j8x9a1p"，需要时使用
+
+输出路径使用"D:\VideoCreation\Tests"，转换为wsl支持的格式
+
+使用sequentialthinking梳理思路，必要时使用tavily搜索互联网获取最新相关资讯

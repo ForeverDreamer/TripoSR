@@ -1,0 +1,418 @@
+{
+  // WSL2特定优化以提升性能
+  "remote.WSL.fileWatcher.polling": false, // 使用原生文件监视（已修复配置项名称）
+  // "remote.WSL.debug": false, // 此配置项已弃用，移除以避免报错
+  
+  // 强制特定扩展在WSL的正确位置运行
+  "remote.extensionKind": {
+    "ms-azuretools.vscode-containers": ["ui"],
+    "ms-azuretools.vscode-docker": ["ui"],
+    "mhutchie.git-graph": ["workspace"],  // Git Graph应该在workspace运行以正确检测WSL中的Git仓库
+    "donjayamanne.githistory": ["workspace"],  // Git History也应该在workspace运行
+    "esbenp.prettier-vscode": ["workspace"],
+    "charliermarsh.ruff": ["workspace"],
+    "ms-python.python": ["workspace"],
+    "ms-python.debugpy": ["workspace"],
+    "dbaeumer.vscode-eslint": ["workspace"],
+    "kevinrose.vsc-python-indent": ["workspace"],  // Python缩进扩展应在workspace运行
+    "csstools.postcss": ["workspace"]  // PostCSS支持应在workspace运行
+  },
+
+  // Python后端配置 - WSL优化
+  "python.analysis.extraPaths": ["${workspaceFolder}/blender-mcp"],
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.terminal.activateEnvironment": true,
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  
+  // Terminal配置 - WSL优化
+  "terminal.integrated.defaultProfile.linux": "bash-venv",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "/bin/bash",
+      "args": ["-l"],
+      "icon": "terminal-bash"
+    },
+    "bash-venv": {
+      "path": "/bin/bash",
+      "args": ["-c", "cd ${workspaceFolder} && [ -f .venv/bin/activate ] && source .venv/bin/activate; exec bash"],
+      "icon": "terminal-bash"
+    }
+  },
+  "terminal.integrated.fontFamily": "'Cascadia Code PL', Consolas, 'Courier New', monospace",
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.copyOnSelection": false,
+  "terminal.integrated.env.linux": {
+    "TERM": "xterm-256color"
+  },
+  "terminal.integrated.gpuAcceleration": "auto", // Changed from "on" for better compatibility
+  "terminal.integrated.shellIntegration.enabled": true,
+  
+  // TypeScript性能优化 - WSL2特定
+  "typescript.tsserver.maxTsServerMemory": 3072,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+  "typescript.tsdk": "frontend/app/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  
+  // 编辑器性能设置 - WSL优化
+  "editor.largeFileOptimizations": true,
+  "editor.maxTokenizationLineLength": 20000,
+  "editor.minimap.enabled": false, // 减少渲染开销
+  "editor.renderWhitespace": "selection", // Changed from "boundary" for performance
+  "search.searchOnType": false,
+  "search.followSymlinks": false, // Important for WSL performance
+  
+  // Mypy类型检查器配置
+  "mypy-type-checker.args": [
+    "--config-file=pyproject.toml",
+    "--show-column-numbers"
+  ],
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+  "mypy-type-checker.reportingScope": "file",
+  "mypy-type-checker.preferDaemon": true,
+  
+  // Ruff配置 - WSL路径优化
+  "ruff.enable": true,
+  "ruff.nativeServer": "on",
+  "ruff.path": ["ruff"], // Use system ruff in WSL, not absolute path
+  "ruff.organizeImports": true,
+  "ruff.fixAll": true,
+  "ruff.configuration": "${workspaceFolder}/pyproject.toml",
+  "ruff.codeAction.fixViolation": {
+    "enable": true
+  },
+  "ruff.codeAction.disableRuleComment": {
+    "enable": true
+  },
+  "ruff.lint.preview": false,
+  
+  // Python文件特定配置
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": false, // Disabled for performance
+    "editor.formatOnPaste": false, // Disabled for performance
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.ruff": "explicit",
+      "source.fixAll.ruff": "explicit"
+    },
+    "editor.rulers": [88],
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 88
+  },
+  
+  // 前端代码质量工具
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+  
+  // 全局自动格式化配置
+  "editor.formatOnSave": true,
+  "editor.formatOnType": false,
+  "editor.formatOnPaste": false,
+  
+  // Pylint - 已弃用配置项，移除以避免报错
+  // "pylint.enabled": false,  // 此配置项已弃用，改为使用独立的pylint扩展配置
+  
+  // Python测试配置
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [
+    "tests",
+    "-v",
+    "--tb=short"
+  ],
+  "python.testing.autoTestDiscoverOnSaveEnabled": false, // Disabled for performance
+  
+  // Python语言服务器配置 - 使用Cursor内置服务器
+  "python.languageServer": "None", // Cursor使用cursorpyright替代Pylance
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.indexing": true,
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportOptionalMemberAccess": "none",
+    "reportAttributeAccessIssue": "none",
+    "reportGeneralTypeIssues": "warning",
+    "reportUnusedImport": "none",
+    "reportUnusedVariable": "none"
+  },
+  "python.analysis.inlayHints.functionReturnTypes": true,
+  "python.analysis.inlayHints.variableTypes": false,
+  "python.analysis.packageIndexDepths": [
+    {"name": "sklearn", "depth": 2},
+    {"name": "matplotlib", "depth": 2},
+    {"name": "scipy", "depth": 2},
+    {"name": "pandas", "depth": 2},
+    {"name": "numpy", "depth": 2}
+  ],
+
+  // JavaScript/TypeScript配置
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.quoteStyle": "single",
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  
+  // Prettier配置
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.requireConfig": true,
+  "prettier.bracketSameLine": true,
+  "prettier.singleQuote": true,
+  "prettier.semi": true,
+  "prettier.trailingComma": "es5",
+
+  // 前端文件类型配置
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  
+  // ESLint配置
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "eslint.workingDirectories": [
+    "./frontend/app",
+    "./frontend/admin"
+  ],
+  
+  // Tailwind CSS配置
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript",
+    "javascript": "javascript",
+    "javascriptreact": "javascript",
+    "html": "html"
+  },
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "classList",
+    ".*Classes.*"
+  ],
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["clsx\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ],
+  "files.associations": {
+    "*.css": "css",  // 修复为标准的css语言模式
+    ".env": "properties",  // 为.env文件启用properties语法高亮
+    ".env.*": "properties",  // 为所有.env.*文件启用properties语法高亮
+    "*.env": "properties"  // 为*.env文件启用properties语法高亮
+  },
+  
+  // 智能提示优化
+  "editor.suggestSelection": "first",
+  "editor.inlineSuggest.enabled": true,
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "editor.snippetSuggestions": "top",
+  "editor.tabSize": 2,
+  "editor.wordWrap": "on",
+  "editor.linkedEditing": true,
+  
+  // 代码折叠和美化
+  "editor.foldingStrategy": "indentation",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.guides.bracketPairsHorizontal": true,
+  "editor.guides.highlightActiveBracketPair": true,
+  "editor.hover.sticky": true,
+  
+  // Python文档字符串格式
+  "autoDocstring.docstringFormat": "google",
+  
+  // Jupyter配置优化
+  "jupyter.askForKernelRestart": false,
+  "jupyter.interactiveWindow.creationMode": "perFile",
+  "jupyter.interactiveWindow.textEditor.executeSelection": true,
+  "jupyter.widgetScriptSources": ["jsdelivr.com", "unpkg.com"],
+  "jupyter.showVariableViewWhenDebugging": true,
+  
+  // Git集成配置
+  "git.enableSmartCommit": true,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.openRepositoryInParentFolders": "always",
+  
+  // Git Graph特定配置
+  "git-graph.maxDepthOfRepoSearch": 2,  // 允许Git Graph搜索子文件夹中的仓库
+  "git-graph.showCurrentBranchByDefault": true,
+  
+  // 文件自动保存 - WSL优化
+  "files.autoSave": "onFocusChange", // Changed from afterDelay for better performance
+  
+  // 文件资源管理器忽略设置 - WSL优化
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/*.pyc": true,
+    "**/.ruff_cache": true,
+    "**/.mypy_cache": true,
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/out": true,
+    "**/.coverage": true,
+    "**/.hypothesis": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.env.local": true,
+    "**/.env.development.local": true,
+    "**/.env.test.local": true,
+    "**/.env.production.local": true,
+    "**/.vscode-server": true, // WSL-specific
+    "**/lost+found": true // WSL-specific
+  },
+  
+
+  
+  // 搜索排除 - WSL优化
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/out": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true,
+    "**/.mypy_cache": true,
+    "**/build": true,
+    "**/dist": true,
+    "**/.git": true,
+    "**/.vscode-server": true, // WSL-specific
+    "**/lost+found": true, // WSL-specific
+  },
+  
+  // 文件监视器排除 - WSL2关键性能优化
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.next/**": true,
+    "**/__pycache__/**": true,
+    "**/.mypy_cache/**": true,
+    "**/.ruff_cache/**": true,
+    "**/.pytest_cache/**": true,
+    "**/build/**": true,
+    "**/dist/**": true,
+    "**/.venv/**": true,
+    "**/*.pyc": true,
+    "**/.DS_Store": true,
+    "**/coverage/**": true,
+    "**/.nyc_output/**": true,
+    "**/.vscode-server/**": true, // WSL-specific
+    "**/lost+found/**": true, // WSL-specific
+    "**/.cache/**": true,
+    "**/logs/**": true,
+    "**/tmp/**": true,
+  },
+  
+  // 搜索配置优化
+  "search.useIgnoreFiles": true,
+  // 移除可能不存在的搜索配置项
+  // "search.quickOpen.includeSymbols": false,  // 此配置项可能不存在
+  
+  // 窗口配置
+  "window.autoDetectColorScheme": true,
+  
+  // 调试配置
+  "debug.internalConsoleOptions": "neverOpen",
+  "debugpy.debugJustMyCode": false,
+  
+  // Shell脚本格式化
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[dotenv]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  },
+  "[properties]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "cursorpyright.analysis.autoImportCompletions": true,
+  "cursorpyright.analysis.diagnosticSeverityOverrides": {
+    "reportOptionalMemberAccess": "none",
+    "reportAttributeAccessIssue": "none",
+    "reportGeneralTypeIssues": "warning",
+    "reportUnusedImport": "none",
+    "reportUnusedVariable": "none"
+  },
+  "cursorpyright.analysis.extraPaths": [
+    "${workspaceFolder}/blender-mcp"
+  ],
+
+  "cursorpyright.analysis.inlayHints.functionReturnTypes": true,
+  "cursorpyright.analysis.inlayHints.variableTypes": false,
+  "cursorpyright.analysis.typeCheckingMode": "basic",
+  "cursorpyright.analysis.ignore": [
+    "animation_nodes/**"
+  ],
+  "cursorpyright.analysis.diagnosticMode": "workspace",
+  "cursorpyright.analysis.autoSearchPaths": false,
+  "cursorpyright.analysis.extraPaths": [
+    "${workspaceFolder}/blender-mcp"
+  ],
+  "cursorpyright.analysis.stubPath": "",
+  "cursorpyright.analysis.include": [
+    "**/*.py"
+  ],
+  "cursorpyright.analysis.exclude": [
+    "**/node_modules/**",
+    "**/.venv/**",
+    "**/__pycache__/**",
+    "**/.pytest_cache/**",
+    "**/.ruff_cache/**",
+    "**/.mypy_cache/**"
+  ],
+  "cursorpyright.analysis.autoRestart": true
+}
