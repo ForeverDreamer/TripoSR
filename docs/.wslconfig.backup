@@ -1,0 +1,34 @@
+# WSL2 优化配置 - 针对64GB内存系统
+[wsl2]
+
+# 内存设置：分配32GB（50%物理内存）
+# 这为编译大型CUDA项目提供充足内存，同时为Windows保留32GB
+memory=32GB
+
+# CPU设置：分配16个处理器（50%）
+processors=16
+
+# Swap设置：16GB swap空间，用于处理内存峰值
+swap=16GB
+
+# Swap文件位置（可选，使用默认位置）
+# swapfile=C:\\temp\\wsl-swap.vhdx
+
+# 限制WSL2使用的最大内存百分比
+# 设置为false以允许使用所有分配的内存
+# localhostForwarding=true
+
+# 页面报告（建议开启以提高性能）
+pageReporting=true
+
+# 猜测VHDX大小（建议开启）
+guessVhdSize=true
+
+# 嵌套虚拟化支持
+nestedVirtualization=true
+
+# 内核命令行参数 - 增加文件监视限制
+kernelCommandLine = sysctl.vm.max_map_count=262144
+
+# 调试控制台（生产环境设为false）
+debugConsole=false
