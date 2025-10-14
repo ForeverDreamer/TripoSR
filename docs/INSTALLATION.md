@@ -116,6 +116,8 @@ nvidia-smi
    - CUDA 11.x → PyTorch with CUDA 11.8
    - 无 GPU → CPU-only PyTorch
 5. **依赖安装**: 安装所有 requirements.txt 中的包
+   - `requirements.txt`: 灵活版本约束（推荐开发）
+   - `requirements-frozen.txt`: 完整锁定版本（推荐生产）
 6. **验证**: 测试所有导入和 CUDA 功能
 
 ### 步骤 4: 验证安装

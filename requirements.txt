@@ -1,12 +1,50 @@
+# TripoSR Requirements
+#
+# INSTALLATION INSTRUCTIONS:
+#
+# 1. Create virtual environment with Python 3.11:
+#    uv venv --python 3.11
+#    source .venv/bin/activate  # Linux/macOS
+#    .venv\Scripts\activate     # Windows
+#
+# 2. Install PyTorch based on your GPU:
+#
+#    For Blackwell architecture (RTX 50 series, sm_120) - REQUIRED for full support:
+#    uv pip install torch==2.8.0 torchvision --index-url https://download.pytorch.org/whl/cu128
+#
+#    For Ada Lovelace (RTX 40 series) or earlier with CUDA 12.1:
+#    uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+#
+#    For CUDA 11.8:
+#    uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+#
+# 3. Install other dependencies:
+#    uv pip install -r requirements.txt
+#
+# 4. Verify installation:
+#    python -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA: {torch.cuda.is_available()}')"
+#
+# For a complete locked environment (recommended for production):
+#    uv pip install -r requirements-frozen.txt
+
+# Core dependencies - Configuration and utilities
 omegaconf==2.3.0
-Pillow==10.1.0
 einops==0.7.0
-git+https://github.com/tatsy/torchmcubes.git
-transformers==4.35.0
-trimesh==4.0.5
-rembg
-huggingface-hub
+
+# Core dependencies - Image processing
+Pillow==10.1.0
 imageio[ffmpeg]
-gradio
+rembg
+
+# Core dependencies - Transformers ecosystem
+transformers==4.35.0
+huggingface-hub>=0.17.0
+
+# Core dependencies - 3D processing
+trimesh==4.0.5
+git+https://github.com/tatsy/torchmcubes.git
 xatlas==0.0.9
 moderngl==5.10.0
+
+# Web interface
+gradio>=4.0.0

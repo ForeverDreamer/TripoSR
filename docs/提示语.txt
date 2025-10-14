@@ -1,4 +1,4 @@
-
+执行git提交和推送本地所有文件修改到远程origin仓库 
 
 python run.py examples/unicorn.png --output-dir output/
 

@@ -2,9 +2,9 @@
 
 <div align="center">
 
-[![](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
-[![](https://img.shields.io/badge/CUDA-11.8+-76B900.svg)](https://developer.nvidia.com/cuda-toolkit)
+[![](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![](https://img.shields.io/badge/PyTorch-2.8.0+-ee4c2c.svg)](https://pytorch.org/)
+[![](https://img.shields.io/badge/CUDA-12.8+-76B900.svg)](https://developer.nvidia.com/cuda-toolkit)
 [![](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 [GitHub](https://github.com/VAST-AI-Research/TripoSR) | [Paper](https://arxiv.org/abs/2403.02151) | [HuggingFace](https://huggingface.co/stabilityai/TripoSR) | [Demo](https://huggingface.co/spaces/stabilityai/TripoSR)
@@ -51,15 +51,22 @@ python gradio_app.py
 ### 最低要求
 - **GPU**: NVIDIA GPU with 6GB+ VRAM（或CPU，但会很慢）
 - **内存**: 8GB+ RAM
-- **Python**: 3.8+
-- **CUDA**: 11.8+ (GPU模式)
+- **Python**: 3.11+
+- **CUDA**: 12.1+ (GPU模式)
 - **磁盘**: 10GB+ 可用空间
 
 ### 推荐配置
-- **GPU**: RTX 3080 / RTX 4080 或更高
+- **GPU**: RTX 3080 / RTX 4080 或更高（RTX 50系列需要PyTorch 2.8.0+）
 - **内存**: 16GB+ RAM
 - **Python**: 3.11
-- **CUDA**: 12.x
+- **CUDA**: 12.8 (支持Blackwell架构)
+
+### GPU架构支持
+- **Blackwell (sm_120)**: RTX 50系列 - 需要 PyTorch 2.8.0+ with CUDA 12.8
+- **Ada Lovelace (sm_89)**: RTX 40系列 - PyTorch 2.0+ with CUDA 12.1+
+- **Ampere (sm_86)**: RTX 30系列 - PyTorch 2.0+ with CUDA 11.8+
+
+详见 [Blackwell GPU指南](docs/BLACKWELL_GPU_GUIDE.md)
 
 ## 🎮 使用示例
 
@@ -112,7 +119,20 @@ meshes[0].export("output/mesh.obj")
 | [安装指南](docs/INSTALLATION.md) | 详细安装步骤 |
 | [CUDA安装](docs/CUDA_INSTALL.md) | CUDA Toolkit安装 |
 | [故障排除](docs/TROUBLESHOOTING.md) | 常见问题解决方案 |
+| [Blackwell GPU指南](docs/BLACKWELL_GPU_GUIDE.md) | RTX 50系列GPU支持 |
+| [命令参考](docs/COMMANDS_REFERENCE.md) | 完整命令行参考 |
 | [原始README](docs/ORIGINAL_README.md) | 官方原始文档 |
+
+### 依赖文件
+
+| 文件 | 用途 |
+|------|------|
+| `requirements.txt` | 灵活的依赖版本约束（推荐开发使用） |
+| `requirements-frozen.txt` | 完整锁定的精确版本（推荐生产使用） |
+
+### 相关项目
+
+- **[TripoSG](../TripoSG)** - 下一代高保真3D生成模型（2025），基于flow matching的生成式方法
 
 ## 🛠️ 项目结构
 
